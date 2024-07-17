@@ -1,0 +1,10 @@
+mean_fc = 48*10^6; % LOG
+V_fc = 0.15;
+std_fc = V_fc*mean_fc;
+V_fy = 0.05;
+mean_fy = 500*10^6/(1-1.64*V_fy); % Nog aanpassen! LOG
+std_fy = V_fy*mean_fy;
+mean_theta_M = 1;
+V_theta_M = 0.06; % LOG Reinforcement properties decisive
+mean_theta_Q = 1;
+V_theta_Q = 0.14; % LOG Concrete properties decisive
