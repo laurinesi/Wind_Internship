@@ -9,7 +9,7 @@ data_stat = 'data\c_m_stat.mat';
 
 % what times for partial registrations do you want to investigate?
     T_fs  = 20; %[10 20 3600];
-    T_3600 = 3600;
+    T_600 = 600;  % for 10min
 % required fracile values
     P_cook = 0.78;
     P_code = 0.95;
@@ -35,10 +35,10 @@ data_stat = 'data\c_m_stat.mat';
 %% 
     
 
-load('data\c_i.mat');
-load(data_mom);
-load(data_for);
-load(data_stat);
+load('data\c_i.mat');    % wind pressures
+load(data_mom);    % moment
+load(data_for);    % force
+load(data_stat);   % static
 c_m = c_m_24hr;
 c_f = c_f_24hr;
 c_m_stat = c_m_serie;
@@ -95,5 +95,5 @@ end
 
 %% Clear variables
 
-clearvars -except Cm_max Cf_max Cm_stat N N_stat T_fs T_3600
+clearvars -except Cm_max Cf_max Cm_stat N N_stat T_fs T_600
 
