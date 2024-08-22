@@ -137,25 +137,14 @@ if F_dist == 1
     %load('V_Schiphol_maxima_conf1_Fx_G_MLE_sec1.xpt');
     A_S = dlmread('V_Schiphol_maxima_conf1_Fx_G_MLE_sec1.xpt','\t');
 
+    % shift F_T (50years maxima proba) to F_t (1year maxima proba)
+    A_S(:,2) = A_S(:,2).^(1/50);
+
     % 
     SdistType = 'G';
 
-    % shorten the data
-    endIdx = 13502;
-    A_S = A_S(1:endIdx, :); % Garde les 8910 premières lignes et toutes les colonnes
-
-    % to plot only the tail
-    % Define the start and end indices
-    startIdx = 8324;
-    
-    % Calculate the number of rows to copy
-    numRowsToCopy = endIdx - startIdx + 1;
-    
-    % Preallocate A_S_crop
-    A_S_crop = zeros(numRowsToCopy, size(A_S, 2));
-    
-    % Copy the data from A_S to A_S_crop
-    A_S_crop(:, :) = A_S(startIdx:endIdx, :);
+    % saving data as a txt file
+    writematrix(A_S,'V_Schiphol_maxima_conf2_Fx_G_MLE_sec1','Delimiter','\t','FileType','text')
 
 end
 
@@ -165,27 +154,15 @@ if F_dist == 2
     addpath('..\wind-speeds\fitted-dists\');
     %load('V_Schiphol_maxima_conf1_Fx_G_MLE_sec1.xpt');
     A_S = dlmread('V_Schiphol_maxima_conf1_Fx_GEV_MLE_sec1.xpt','\t');
-    %A_S = xptread('V_Schiphol_maxima_conf1_Fx_G_MLE_sec1.xpt');
+
+    % shift F_T (50years maxima proba) to F_t (1year maxima proba)
+    A_S(:,2) = A_S(:,2).^(1/50);
     
     %
     SdistType = 'GEV';
 
-    % shorten the data
-    endIdx = 8910;
-    A_S = A_S(1:endIdx, :); % Garde les 8910 premières lignes et toutes les colonnes
-
-    % to plot only the tail
-    % Define the start and end indices
-    startIdx = 6346;
-    
-    % Calculate the number of rows to copy
-    numRowsToCopy = endIdx - startIdx + 1;
-    
-    % Preallocate A_S_crop
-    A_S_crop = zeros(numRowsToCopy, size(A_S, 2));
-    
-    % Copy the data from A_S to A_S_crop
-    A_S_crop(:, :) = A_S(startIdx:endIdx, :);
+    % saving data as a txt file
+    writematrix(A_S,'V_Schiphol_maxima_conf2_Fx_GEV_MLE_sec1','Delimiter','\t','FileType','text')
 
 end
 
@@ -339,6 +316,7 @@ grid minor
 legend(C_name, 'Cabauw data', S_name, S10_name, 'Schiphol data', Location='northwest')
 legend box off
 title('CDFs of whole datasets')
+xlim([0, 30]); % Limiting the x-axis to 30 m/s
 
 
 %% CDFs (gumbel plot)
@@ -373,4 +351,5 @@ grid minor
 legend(C_name, 'Cabauw data', S_name, S10_name, 'Schiphol data', Location='northwest')
 legend box off
 title('Gumbel plot')
+ylim([-2, 13]);
 
