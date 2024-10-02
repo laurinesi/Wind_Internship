@@ -12,6 +12,8 @@ model_Schiphol = readmatrix("RACMO_Schiphol.csv"); % model
 
 % settings
 noise = 2; % [1 2] ~ [Gaussian Uniform]
+plotcdf = 2; % [1 2] ~ [yes no]
+plotnoise = 2; % [1 2] ~ [yes no]
 
 % Initialization
 FFGaussNoise = zeros(height(data_Schiphol),1);
@@ -52,19 +54,23 @@ if noise == 1
     
     % Store the modified data back in the table
     data_Schiphol.FFGaussNoise = FFGaussNoise;
+
+    if plotnoise == 1
     
-    % Plot the CDFs for Gaussian noise
-    figure;
-    plot(sort(data_Schiphol.FFGaussNoise), linspace(0, 1, length(data_Schiphol.FFGaussNoise)), 'r');
-    hold on;
-    plot(sort(data_Schiphol.FF), linspace(0, 1, length(data_Schiphol.FF)), 'k');
-    xlabel('Wind speeds (m/s)');
-    ylabel('F_X(x)');
-    title('Comparison between original and noisy data');
-    legend('FFGaussNoise', 'FF');
-    legend Box off
-    xlim([0, 20]); % Limiting the x-axis to 20 m/s
-    
+        % Plot the CDFs for Gaussian noise
+        figure;
+        plot(sort(data_Schiphol.FFGaussNoise), linspace(0, 1, length(data_Schiphol.FFGaussNoise)), 'r');
+        hold on;
+        plot(sort(data_Schiphol.FF), linspace(0, 1, length(data_Schiphol.FF)), 'k');
+        xlabel('Wind speeds (m/s)');
+        ylabel('F_X(x)');
+        title('Comparison between original and noisy data');
+        legend('FFGaussNoise', 'FF');
+        legend Box off
+        xlim([0, 20]); % Limiting the x-axis to 20 m/s
+        
+    end
+
     % saving data as a txt file
     writetable(data_Schiphol,'data_Schiphol','Delimiter','\t','FileType','text') 
 
@@ -84,18 +90,22 @@ if noise == 2
     
     % Store the modified data back in the table
     data_Schiphol.FFUnifNoise = FFUnifNoise;
+
+    if plotnoise == 1
     
-    % Plot the CDFs for Uniform noise
-    figure;
-    plot(sort(data_Schiphol.FFUnifNoise), linspace(0, 1, length(data_Schiphol.FFUnifNoise)), 'r');
-    hold on;
-    plot(sort(data_Schiphol.FF), linspace(0, 1, length(data_Schiphol.FFUnifNoise)), 'k');
-    xlabel('Wind speeds (m/s)');
-    ylabel('F_X(x)');
-    title('Comparison between original and noisy data');
-    legend('FFUnifNoise', 'FF');
-    legend Box off
-    xlim([0, 20]); % Limiting the x-axis to 20 m/s
+        % Plot the CDFs for Uniform noise
+        figure;
+        plot(sort(data_Schiphol.FFUnifNoise), linspace(0, 1, length(data_Schiphol.FFUnifNoise)), 'r');
+        hold on;
+        plot(sort(data_Schiphol.FF), linspace(0, 1, length(data_Schiphol.FFUnifNoise)), 'k');
+        xlabel('Wind speeds (m/s)');
+        ylabel('F_X(x)');
+        title('Comparison between original and noisy data');
+        legend('FFUnifNoise', 'FF');
+        legend Box off
+        xlim([0, 20]); % Limiting the x-axis to 20 m/s
+
+    end
 
     % saving data as a txt file
     writetable(data_Schiphol,'data_Schiphol','Delimiter','\t','FileType','text') 
@@ -103,24 +113,27 @@ if noise == 2
 end
 
 %% Compare measurements and model
+if plotcdf == 1
 
-% Plot the empirical CDFs comparing measurements and model
-figure;
-if noise == 1
-    plot(sort(data_Schiphol.FFGaussNoise), linspace(0, 1, length(data_Schiphol.FFGaussNoise)), 'k');
-elseif noise == 2
-    plot(sort(data_Schiphol.FFUnifNoise), linspace(0, 1, length(data_Schiphol.FFUnifNoise)), 'k');
+    % Plot the empirical CDFs comparing measurements and model
+    figure;
+    if noise == 1
+        plot(sort(data_Schiphol.FFGaussNoise), linspace(0, 1, length(data_Schiphol.FFGaussNoise)), 'k');
+    elseif noise == 2
+        plot(sort(data_Schiphol.FFUnifNoise), linspace(0, 1, length(data_Schiphol.FFUnifNoise)), 'k');
+    end
+    hold on
+    plot(sort(model_Schiphol.F010), linspace(0, 1, length(model_Schiphol.F010)), '--r');
+    hold on
+    plot(sort(model_Schiphol.wgmax), linspace(0, 1, length(model_Schiphol.wgmax)), '--b');
+    xlabel('Wind speeds (m/s)');
+    ylabel('F_X(x)');
+    title('Empirical CDFs of each whole dataset at Schiphol');
+    legend('Measurements', 'RACMO', 'including gusts',Location='east');
+    legend Box off
+    xlim([0, 27]); % Limiting the x-axis to 27 m/s
+
 end
-hold on
-plot(sort(model_Schiphol.F010), linspace(0, 1, length(model_Schiphol.F010)), '--r');
-hold on
-plot(sort(model_Schiphol.wgmax), linspace(0, 1, length(model_Schiphol.wgmax)), '--b');
-xlabel('Wind speeds (m/s)');
-ylabel('F_X(x)');
-title('Empirical CDFs of each whole dataset at Schiphol');
-legend('Measurements', 'RACMO', 'including gusts',Location='east');
-legend Box off
-xlim([0, 27]); % Limiting the x-axis to 27 m/s
 
 
 % Histogram of Schiphol measurements
