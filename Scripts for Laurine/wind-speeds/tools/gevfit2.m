@@ -1,46 +1,8 @@
 function [parmhat,parmci,se] = gevfit2(x,alpha,options)
 %GEVFIT Parameter estimates and confidence intervals for generalized extreme value data.
-%   PARMHAT = GEVFIT(X) returns maximum likelihood estimates of the parameters
-%   of the generalized extreme value (GEV) distribution given the data in X.
-%   PARMHAT(1) is the shape parameter, K, PARMHAT(2) is the scale parameter,
-%   SIGMA, and PARMHAT(3) is the location parameter, MU.
-%
-%   [PARMHAT,PARMCI] = GEVFIT(X) returns 95% confidence intervals for the
-%   parameter estimates.
-%
-%   [PARMHAT,PARMCI] = GEVFIT(X,ALPHA) returns 100(1-ALPHA) percent
-%   confidence intervals for the parameter estimates.
-%
-%   [...] = GEVFIT(X,ALPHA,OPTIONS) specifies control parameters for the
-%   iterative algorithm used to compute ML estimates. This argument can be
-%   created by a call to STATSET.  See STATSET('gevfit') for parameter names
-%   and default values.
-%
-%   Pass in [] for ALPHA to use the default values.
-%
-%   When K < 0, the GEV is the type III extreme value distribution.  When K >
-%   0, the GEV distribution is the type II, or Frechet, extreme value
-%   distribution.  If W has a Weibull distribution as computed by the WBLFIT
-%   function, then -W has a type III extreme value distribution and 1/W has a
-%   type II extreme value distribution.  In the limit as K approaches 0, the
-%   GEV is the mirror image of the type I extreme value distribution as
-%   computed by the EVFIT function.
-%
-%   The mean of the GEV distribution is not finite when K >= 1, and the
-%   variance is not finite when PSI >= 1/2.  The GEV distribution is defined
-%   for K*(X-MU)/SIGMA > -1.
-%
-%   See also EVFIT, GEVCDF, GEVINV, GEVLIKE, GEVPDF, GEVRND, GEVSTAT, MLE,
-%   STATSET.
-
-%   References:
-%      [1] Embrechts, P., C. Klüppelberg, and T. Mikosch (1997) Modelling
-%          Extremal Events for Insurance and Finance, Springer.
-%      [2] Kotz, S. and S. Nadarajah (2001) Extreme Value Distributions:
-%          Theory and Applications, World Scientific Publishing Company.
-
-%   Copyright 1993-2020 The MathWorks, Inc.
-
+% parmhat : ML estimates
+% parmci : 95% confidence interval
+% se : standard error
 
 if ~isvector(x)
     error(message('stats:gevfit:VectorRequired'));
