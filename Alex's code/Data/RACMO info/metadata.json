@@ -1,0 +1,62 @@
+{
+    "fh050": {
+        "long_name": "Wind Speed at 50-m Height",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "fh100": {
+        "long_name": "Wind Speed at 100-m Height",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "fh150": {
+        "long_name": "Wind Speed at 150-m Height",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "fh200": {
+        "long_name": "Wind Speed at 200-m Height",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "fh250": {
+        "long_name": "Wind Speed at 250-m Height",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "fh300": {
+        "long_name": "Wind Speed at 300-m Height",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "u10m": {
+        "long_name": "10-m Zonal Wind Speed",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "ustr": {
+        "long_name": "Zonal Momentum Stress",
+        "units": "Pa",
+        "cell_methods": "time: mean (3-hr averaged values)"
+    },
+    "v10m": {
+        "long_name": "10-m Meridional Wind Speed",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "vstr": {
+        "long_name": "Meridional Momentum Stress",
+        "units": "Pa",
+        "cell_methods": "time: mean (3-hr averaged values)"
+    },
+    "F010": {
+        "long_name": "10-m Wind Speed",
+        "units": "m s-1",
+        "cell_methods": "time: point (instantaneous values)"
+    },
+    "wgmax": {
+        "long_name": "Maximum 10-m Wind Speed including Gusts",
+        "units": "m s-1",
+        "cell_methods": "time: maximum (3-hr maximum values)"
+    }
+}
