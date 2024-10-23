@@ -12,61 +12,37 @@ sigma_R = 180;
 R = makedist('Normal', 'mu', mu_R, 'sigma', sigma_R);
 % S = makedist('Normal', 'mu', mu_S, 'sigma', sigma_S);
 
+%% Return values
 
-%% Return values measurements
+location = 'Cabauw';
 
 % Load Alex data for GW dist
-load('Alex-dists/GW_Cabauw_est.mat');
+if location == "Cabauw"
+    load('../../wind-speeds/Alex-dists/GW_Cabauw_est.mat');
+elseif location == "Schiphol"
+    load('../../wind-speeds/Alex-dists/GW_Schiphol_est.mat');
+end
 
-return_period = df.return;
-original = df.original;
+return_period = df.return;  % Return period
+original = df.original;  % Return values measurements only
+model_est = df.model_est;  % Return values RACMO tail
+proba = df.proba;  % Probability of exceedance
 
 % Find the index where the return period equals 50
 index = find(return_period == 50);
 
-% Check if the return period of 50 exists in the data
-if ~isempty(index)
-
-    original_50 = original(index);
-    fprintf('Basic wind velocity: %f\n', original_50);
-else
-    original_50 = interp1(return_period, original, 50, 'nearest');
-    fprintf('Interpolated return value: %f\n', original_50);
-end
-
-
-%% Return values RACMO tail
-
-% Load Alex data for GW dist
-load('Alex-dists/GW_Cabauw_est.mat');
-
-return_period = df.return;
-model_est = df.model_est;
-
-% Find the index where the return period equals 50
-index = find(return_period == 50);
-
-% Check if the return period of 50 exists
-if ~isempty(index)
-    model_est_50 = model_est(index);
-    fprintf('Basic wind velocity: %f\n', model_est_50);
-else
-    model_est_50 = interp1(return_period, model_est, 50, 'nearest');
-    fprintf('Interpolated return value: %f\n', model_est_50);
-end
-
-
-proba = df.proba;
-figure
-plot(model_est,proba)
-xlabel('Wind speed (m/s)')
-ylabel('P(X > x)')
+% % Probability of exceedance/wind velocity
+% figure
+% plot(model_est,proba)
+% xlabel('Wind speed (m/s)')
+% ylabel('P(X > x)')
 
 p = 1 - proba;
+% CDF of derived ws with RACMO tail
 figure
 plot(model_est, p)
 xlabel('Wind speed (m/s)')
-ylabel('P(X < x)')
+ylabel('P(X <= x)')
 
 % Plot return periods/return values 
 figure
@@ -79,6 +55,8 @@ hold on
 xline(50, 'k--')
 xlabel('Return period (year)')
 ylabel('Wind speed (m/s)')
+legend('RACMO tail','Measurements tail','Measurements observed', 'Location','northwest')
+legend Box off
 grid on
 set(gca, 'XScale', 'log')
 
@@ -102,15 +80,14 @@ mu_S = mean(S);
 sigma_S = std(S);
 
 S = makedist('Normal', 'mu', mu_S, 'sigma', sigma_S);
-% x_pdf = linspace(min(mu_Fwind - 3*sigma_Fwind), max(mu_Fwind + 3*sigma_Fwind), 100);
-% pdf_F = pdf(F, x_pdf);
+% x_pdf = linspace(min(mu_S - 3*sigma_S), max(mu_S + 3*sigma_S), 100);
+% pdf_S = pdf(S, x_pdf);
 % figure
-% plot(x_pdf,pdf_F, 'k-')
+% plot(x_pdf,pdf_S, 'k-')
 
 %% Plot PDF
-x_pdf = linspace(min(mu_R - 3*sigma_R, mu_S - 3*sigma_S), max(mu_R + 3*sigma_R, mu_S + 3*sigma_S), 100);
 
-% Compute pdf
+x_pdf = linspace(min(mu_R - 3*sigma_R, mu_S - 3*sigma_S), max(mu_R + 3*sigma_R, mu_S + 3*sigma_S), 100);
 pdf_R = pdf(R, x_pdf);
 pdf_S = pdf(S, x_pdf);
 
