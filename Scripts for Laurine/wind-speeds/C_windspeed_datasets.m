@@ -13,25 +13,31 @@ KNW = [];
 
 
 % Definition of tables
-data(:,1) = data_Cabauw.DateTime; % DateTime
-data(:,2) = data_Cabauw.Year; % Year (starting the new year on july 1)
-data(:,3) = data_Cabauw.F010; % F010 : 10-m Wind Speed (m/s)
+datetime_column = data_Cabauw.Year;
+year_values = year(datetime_column);
+mask = (year_values > 2000) & (year_values < 2020);
+filtered_years = year_values(mask);
+data(:,1) = filtered_years; % Year (starting the new year on july 1)
+filtered_data = data_Cabauw.F010(mask);
+data(:,2) = filtered_data; % F010 : 10-m Wind Speed (m/s)
 
-RACMO(:,1) = RACMO_Cabauw.DateTime; % DateTime
-RACMO(:,2) = RACMO_Cabauw.Year; % Year
-RACMO(:,3) = RACMO_Cabauw.w10m; % w10m : 10-m Wind Speed (m/s)
+for i = 1:size(RACMO_Cabauw.Year)
+    RACMO(i,1) = RACMO_Cabauw.Year(i) + 1000; % Year
+end
+RACMO(:,2) = RACMO_Cabauw.w10m; % w10m : 10-m Wind Speed (m/s)
 
-KNW(:,1) = KNW_Cabauw.DateTime; % DateTime
-KNW(:,2) = KNW_Cabauw.Year; % Year
-KNW(:,3) = KNW_Cabauw.F010; % F010 : Wind Speed at 10m Height
+datetime_column = KNW_Cabauw.Year;
+year_values = year(datetime_column);
+KNW(:, 1) = year_values; % Year
+KNW(:,2) = KNW_Cabauw.F010; % F010 : Wind Speed at 10m Height
 
 
 % saving data as a txt file
-data_Cabauw = array2table(data, "VariableNames",{'DateTime', 'Year', 'F010'});
-writetable(data_Cabauw,'measure_Cabauw','Delimiter','\t','FileType','text')
+table_data_Cabauw = array2table(data, "VariableNames",{'Year', 'F010'});
+writetable(table_data_Cabauw,'measure_Cabauw','Delimiter','\t','FileType','text')
 
-RACMO_Cabauw = array2table(RACMO, "VariableNames",{'DateTime', 'Year', 'w10m'});
-writetable(RACMO_Cabauw,'RACMO_Cabauw','Delimiter','\t','FileType','text')
+table_RACMO_Cabauw = array2table(RACMO, "VariableNames",{'Year', 'w10m'});
+writetable(table_RACMO_Cabauw,'RACMO_Cabauw','Delimiter','\t','FileType','text')
 
-KNW_Cabauw = array2table(KNW, "VariableNames",{'DateTime', 'Year', 'F010'});
-writetable(KNW_Cabauw,'KNW_Cabauw','Delimiter','\t','FileType','text')
+table_KNW_Cabauw = array2table(KNW, "VariableNames",{'Year', 'F010'});
+writetable(table_KNW_Cabauw,'KNW_Cabauw','Delimiter','\t','FileType','text')
