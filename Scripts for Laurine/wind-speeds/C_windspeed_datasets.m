@@ -3,41 +3,46 @@
 addpath('..\wind-speeds\datasets\')
 
 data_Cabauw = readtable("Cabauw_measure.csv"); % measurements
-RACMO_Cabauw = readtable("fulldata.csv"); % RACMO
-KNW_Cabauw = readtable("modeldata.csv"); % KNW
+data_RACMO_Cabauw = readtable("fulldata.csv"); % RACMO
+data_KNW_Cabauw = readtable("modeldata.csv"); % KNW
 
 %% Initialization
-data = [];
-RACMO = [];
-KNW = [];
+data_10 = table;
+RACMO_10 = table;
+KNW_10 = table;
 
 
 % Definition of tables
-datetime_column = data_Cabauw.Year;
-year_values = year(datetime_column);
-mask = (year_values > 2000) & (year_values < 2020);
-filtered_years = year_values(mask);
-data(:,1) = filtered_years; % Year (starting the new year on july 1)
-filtered_data = data_Cabauw.F010(mask);
-data(:,2) = filtered_data; % F010 : 10-m Wind Speed (m/s)
-
-for i = 1:size(RACMO_Cabauw.Year)
-    RACMO(i,1) = RACMO_Cabauw.Year(i) + 1000; % Year
-end
-RACMO(:,2) = RACMO_Cabauw.w10m; % w10m : 10-m Wind Speed (m/s)
-
-datetime_column = KNW_Cabauw.Year;
-year_values = year(datetime_column);
-KNW(:, 1) = year_values; % Year
-KNW(:,2) = KNW_Cabauw.F010; % F010 : Wind Speed at 10m Height
+% Measurements
+year_column = data_Cabauw.Year;
+filtered_idx = year(year_column) > 2000 & year(year_column) < 2020;  % Measurements (only 2000-2020)
+measurements_Cabauw = data_Cabauw(filtered_idx,:);
+measurements_Cabauw.Year = year(measurements_Cabauw.Year);
+data_10.Year = measurements_Cabauw.Year;
+data_10.F010 = measurements_Cabauw.F010;
 
 
-% saving data as a txt file
-table_data_Cabauw = array2table(data, "VariableNames",{'Year', 'F010'});
-writetable(table_data_Cabauw,'measure_Cabauw','Delimiter','\t','FileType','text')
+% RACMO
+year_columnR = data_RACMO_Cabauw.Year;
+filtered_idxR = year_columnR > 974 & year_columnR < 2014;  % Measurements (only 2000-2020)
+filtered_RACMO_Cabauw = data_RACMO_Cabauw(filtered_idxR,:);
+RACMO_Cabauw = movevars(filtered_RACMO_Cabauw,"Year","Before","fh050");
+RACMO_10.Year = RACMO_Cabauw.Year; % Year
+RACMO_10.w10m = RACMO_Cabauw.w10m; % w10m : 10-m Wind Speed (m/s)
 
-table_RACMO_Cabauw = array2table(RACMO, "VariableNames",{'Year', 'w10m'});
-writetable(table_RACMO_Cabauw,'RACMO_Cabauw','Delimiter','\t','FileType','text')
 
-table_KNW_Cabauw = array2table(KNW, "VariableNames",{'Year', 'F010'});
-writetable(table_KNW_Cabauw,'KNW_Cabauw','Delimiter','\t','FileType','text')
+% KNW
+year_column_KNW = data_KNW_Cabauw.Year;
+year_values = year(year_column_KNW);
+KNW_Cabauw = data_KNW_Cabauw;
+KNW_Cabauw.Year = year_values;
+KNW_10.Year = KNW_Cabauw.Year; % Year
+KNW_10.F010 = KNW_Cabauw.F010; % F010 : Wind Speed at 10m Height
+
+
+% saving data as a txt file : [years data_at_10m]
+writetable(data_10,'measure_Cabauw','Delimiter','\t','FileType','text')
+writetable(RACMO_10,'RACMO_Cabauw','Delimiter','\t','FileType','text')
+writetable(KNW_10,'KNW_Cabauw','Delimiter','\t','FileType','text')
+
+clearvars -except measurements_Cabauw RACMO_Cabauw KNW_Cabauw
