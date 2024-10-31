@@ -1,6 +1,6 @@
 % Block Maxima function
 %
-% dataset : table [years data]
+% max_values : table [years max_ws]
 
 function [max_values] = BM_select(dataset)
 
@@ -10,14 +10,15 @@ if ~istable(dataset)
 end
 
 % Extract years and corresponding data from the table
-years = unique(dataset{:,1});  % Assuming the first column is 'Year'
-max_values = zeros(length(years), 2);  % Preallocate for speed
+years = unique(dataset.Year);
+max_values = zeros(length(years), 2);
 
 for i = 1:length(years)
     year = years(i);
     
     % Extract data for the current year
-    year_data = dataset{dataset{:,1} == year, 2};  % Assuming the second column contains the data
+    idx = dataset.Year == year;
+    year_data = dataset.F010(idx);
     
     % Find the maximum value for the current year
     max_value = max(year_data);
@@ -27,10 +28,10 @@ end
 % Create a table
 FF_BM = array2table(max_values, 'VariableNames', {'Year', 'FF'});
 
-% Save the table as a CSV file
-writetable(FF_BM, 'Schiphol_BM.csv');
+% % Save the table as a CSV file
+% writetable(FF_BM, 'Schiphol_BM.csv');
 
 % Save the table as a text file
-writetable(FF_BM, 'Schiphol_BM.txt', 'Delimiter', '\t');
+writetable(FF_BM, 'windspeeds_BM.txt', 'Delimiter', '\t');
 
 end
