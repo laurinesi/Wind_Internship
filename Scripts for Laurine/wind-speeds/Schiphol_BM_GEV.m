@@ -1,10 +1,10 @@
 % probabilistic description of wind loads
+clear all
+close all
+clc
 
 addpath('..\wind-speeds\tools\')
-
-% Datasets
 run("S_windspeed_datasets.m") % Schiphol measure & model (RACMO)
-% run("C_windspeed_datasets.m") % Cabauw measure & model (RACMO, KNW)
 
 %settings
 dataType = 2;  % [1 2] ~ [Model Measurements]
@@ -16,7 +16,7 @@ fixedTail = 2;  % [1 2] ~ [no yes]
 
 if dataType == 1
     % get the yearly maximum wind speeds
-    dataset = model_Schiphol;
+    dataset = model_Schiphol; 
     [max_values] = BM_select(dataset);
     
     % fit a gev distribution
@@ -52,26 +52,6 @@ if dataType == 1
     plot(tail,Marker="_",LineWidth=1,Color='k', DisplayName='MLE estimate')
     legend box on
 
-%     % Create error bar plot
-%     figure;
-%     errorbar(1, tail, se_tail, 'o', 'MarkerSize', 10, 'LineWidth', 2);
-%     xlim([0 20]);   % Set x-axis limits to keep it simple
-%     ylim([tail - 2*se_tail, tail + 2*se_tail]); % Set y-axis limits
-%     xticks(1);     % Only one x-tick for the single data point
-%     xticklabels({'Data Point'});
-%     ylabel('Value');
-%     title('Single Value with Standard Error');
-    
-    % % MLE
-    % disp(['MLE - tail index: ', num2str(tail)]);
-    % disp(['MLE - scale: ', num2str(scale_model)]);
-    % disp(['MLE - location: ', num2str(location_model)]);
-    % % MLE Bootstrap
-    % fprintf('Bootstrap - tail - mu: %.4f, sigma: %.4f\n', mean(GEVparameters.tail), std(GEVparameters.tail));
-    % fprintf('Bootstrap - scale - mu: %.4f, sigma: %.4f\n', mean(GEVparameters.scale), std(GEVparameters.scale));
-    % fprintf('Bootstrap - location - mu: %.4f, sigma: %.4f\n',mean(GEVparameters.location), std(GEVparameters.location));
-
-
     % Comparison of different methods for parameter estimation
     tail_mle = [num2str(tail) ', se=' num2str(se_tail)];
     tail_bootstrap = [num2str(mean(GEVparameters.tail)) ', sd=' num2str(std(GEVparameters.tail))];
@@ -89,7 +69,6 @@ if dataType == 1
     MLE_boot = array2table(table, 'VariableNames', {'MLE', 'MLE - Bootstrap'}, 'RowNames',{'tail index', 'scale', 'location'});
     % writetable(MLE_boot, 'pestimation_model.xlsx', 'WriteRowNames', true);
     disp(MLE_boot)
-    
     
     % Comparison of different methods to compute confidence interval
     ci_tail_mle = [num2str(parmci(1,1)) ', ' num2str(parmci(2,1))];
@@ -113,7 +92,6 @@ if dataType == 1
     disp(['COV - shape: ', num2str(cov_shape)]);
     disp(['COV - scale: ', num2str(cov_scale)]);
     disp(['COV - location: ', num2str(cov_location)]);
-
 end
 
 %% scale & location : bootstrap on measurements dataset (BM)
@@ -250,102 +228,39 @@ if dataType == 2
 %     fprintf('shape parameters - mu: %.4f, sigma: %.4f\n', mean_shape, std_shape);
 %     fprintf('scale parameters - mu: %.4f, sigma: %.4f\n', mean_scale, std_scale);
 %     fprintf('location parameters - mu: %.4f, sigma: %.4f\n', mean_location, std_location);
-
-
-
-%     % Plot PDF of each parameter assuming normal distribution
-%     x_shape = linspace(mean_shape - 4*std_shape, mean_shape + 4*std_shape, 100); % Range for shape parameter
-%     x_scale = linspace(mean_scale - 4*std_scale, mean_scale + 4*std_scale, 100); % Range for scale parameter
-%     x_location = linspace(mean_location - 4*std_location, mean_location + 4*std_location, 100); % Range for location parameter
-%     
-%     pdf_shape = normpdf(x_shape, mean_shape, std_shape); % PDF of shape parameter
-%     pdf_scale = normpdf(x_scale, mean_scale, std_scale); % PDF of scale parameter
-%     pdf_location = normpdf(x_location, mean_location, std_location); % PDF of location parameter
-%     
-%     % shape
-%     figure;
-%     plot(x_shape, pdf_shape, 'Color',	"#A2142F", 'LineWidth', 1.5);
-%     title('PDF of Shape Parameter');
-%     xlabel('Shape');
-%     ylabel('Density');
-%     xlim([min(x_shape), max(x_shape)])
-%     hold on;
-%     % Draw a vertical line at the mean
-%     plot([mean_shape, mean_shape], [0, max(pdf_shape)], 'k--', 'LineWidth', 1);
-%     % Shade the region representing ±1 std deviation
-%     x_fill = [mean_shape-std_shape, linspace(mean_shape-std_shape, mean_shape+std_shape, 100), mean_shape+std_shape];
-%     y_fill = [0, normpdf(linspace(mean_shape-std_shape, mean_shape+std_shape, 100), mean_shape, std_shape), 0];
-%     fill(x_fill, y_fill, 'r', 'FaceAlpha', 0.3, 'EdgeColor', 'none');
-%     hold off;
-%     
-%     % scale
-%     figure;
-%     plot(x_scale, pdf_scale, 'Color',	"#0072BD", 'LineWidth', 1.5);
-%     title('PDF of Scale Parameter');
-%     xlabel('Scale');
-%     ylabel('Density');
-%     xlim([min(x_scale), max(x_scale)])
-%     hold on;
-%     % Draw a vertical line at the mean
-%     plot([mean_scale, mean_scale], [0, max(pdf_scale)], 'k--', 'LineWidth', 1);
-%     %Shade the region representing ±1 std deviation
-%     x_fill = [mean_scale-std_scale, linspace(mean_scale-std_scale, mean_scale+std_scale), mean_scale+std_scale];
-%     y_fill = [0, normpdf(linspace(mean_scale-std_scale, mean_scale+std_scale), mean_scale, std_scale), 0];
-%     fill(x_fill, y_fill, 'b', 'FaceAlpha', 0.3, 'EdgeColor', 'none');
-%     hold off;
-%     
-%     % location
-%     figure;
-%     plot(x_location, pdf_location, 'Color',	"#77AC30", 'LineWidth', 1.5);
-%     title('PDF of Location Parameter');
-%     xlabel('Location');
-%     ylabel('Density');
-%     xlim([min(x_location), max(x_location)])
-%     hold on;
-%     % Draw a vertical line at the mean
-%     plot([mean_location, mean_location], [0, max(pdf_location)], 'k--', 'LineWidth', 1);
-%     % Shade the region representing ±1 std deviation
-%     x_fill = [mean_location-std_location, linspace(mean_location-std_location, mean_location+std_location), mean_location+std_location];
-%     y_fill = [0, normpdf(linspace(mean_location-std_location, mean_location+std_location), mean_location, std_location), 0];
-%     fill(x_fill, y_fill, 'g', 'FaceAlpha', 0.3, 'EdgeColor', 'none');
-%     hold off;
-
 end
-
 
 %% table to save data
 
 if exist("tail_model", "var") && exist("tail_measure", "var") && exist("tail_model_measurements","var")
 
-% Variables
-tail_model = {[num2str(tail) ', sd=' num2str(se_tail)]};
-tail_measurements = {[num2str(tail_measure) ', sd=' num2str(se_tail_measure)]};
-tail_model_measurements = {[num2str(tail) ', sd=' num2str(std_shape)]};
-
-scale_model = {[num2str(scale_model) ', sd=' num2str(se_scale)]};
-scale_measurements = {[num2str(scale_measure) ', sd=' num2str(se_scale_measure)]};
-scale_model_measurements = {[num2str(mean_scale) ', sd=' num2str(std_scale)]};
-
-location_model = {[num2str(location_model) ', sd=' num2str(se_loc)]};
-location_measurements = {[num2str(location_measure) ', sd=' num2str(se_location_measure)]};
-location_model_measurements = {[num2str(mean_location) ', sd=' num2str(std_location)]};
-
-% Create the cell array by storing the variables
-table = {
-    tail_model, tail_measurements, tail_model_measurements;
-    scale_model, scale_measurements, scale_model_measurements;
-    location_model, location_measurements, location_model_measurements
-    };
-
-
-% Create a table
-results = array2table(table, 'VariableNames', {'model', 'measurements', 'model + measurements'}, 'RowNames',{'tail index', 'scale', 'location'});
-writetable(results, 'results.txt', 'WriteRowNames', true, 'Delimiter', '\t');
-writetable(results, 'results.xlsx', 'WriteRowNames', true);
+    tail_model = {[num2str(tail) ', sd=' num2str(se_tail)]};
+    tail_measurements = {[num2str(tail_measure) ', sd=' num2str(se_tail_measure)]};
+    tail_model_measurements = {[num2str(tail) ', sd=' num2str(std_shape)]};
+    
+    scale_model = {[num2str(scale_model) ', sd=' num2str(se_scale)]};
+    scale_measurements = {[num2str(scale_measure) ', sd=' num2str(se_scale_measure)]};
+    scale_model_measurements = {[num2str(mean_scale) ', sd=' num2str(std_scale)]};
+    
+    location_model = {[num2str(location_model) ', sd=' num2str(se_loc)]};
+    location_measurements = {[num2str(location_measure) ', sd=' num2str(se_location_measure)]};
+    location_model_measurements = {[num2str(mean_location) ', sd=' num2str(std_location)]};
+    
+    % Create the cell array by storing the variables
+    table = {
+        tail_model, tail_measurements, tail_model_measurements;
+        scale_model, scale_measurements, scale_model_measurements;
+        location_model, location_measurements, location_model_measurements
+        };
+    
+    % Create a table
+    results = array2table(table, 'VariableNames', {'model', 'measurements', 'model + measurements'}, 'RowNames',{'tail index', 'scale', 'location'});
+    writetable(results, 'results.txt', 'WriteRowNames', true, 'Delimiter', '\t');
+    writetable(results, 'results.xlsx', 'WriteRowNames', true);
 end
 
 
-%% return period
+%% return values
 
 % Define the return periods (in years)
 return_periods = [10, 50, 100, 1000, 10000];
@@ -363,23 +278,17 @@ for i = 1:length(return_periods)
     prob = 1 - P;
     
     % Calculate the wind speed corresponding to the probability
-    wind_speeds(i) = gevinv(prob, mean(GEVparameters.tail), mean(GEVparameters.scale), mean(GEVparameters.location));
+    wind_speeds(i) = gevinv(prob, tail, mean(GEVparameters.scale), mean(GEVparameters.location));
 end
 
 % Display the results
 disp('Return Period (years)     Wind Speed (m/s)');
 disp([return_periods', wind_speeds']);
 
+disp(wind_speeds(2)) % return value 50-year extreme GEV Schiphol - Alex value : 27.99577
+
 figure
 plot(return_periods, wind_speeds)
 grid on
 set(gca, 'XScale', 'log')
-
-%% GP - PoT - MLE - Analytical unc
-
-
-%% GW - PoT - iHill(i) - Analytical unc
-
-
-%% log-GW - PoT - iHill(i) - Analytical unc
 
